@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="https://jonbreeze.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://jonbreeze.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://jonbreeze.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+
+
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+
+<meta name="author" content="Jon Breeze" />
+<meta name="description" content="MEEP modelling Part 1: Square Cavity" />
+<meta name="keywords" content="meep, electromagnetic">
+<meta property="og:site_name" content="Breezey's Blog"/>
+<meta property="og:title" content="MEEP modelling Part 1: Square Cavity"/>
+<meta property="og:description" content="MEEP modelling Part 1: Square Cavity"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://jonbreeze.github.io/meep-cavity-square.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-07-19 10:50:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://jonbreeze.github.io/author/jon-breeze.html">
+<meta property="article:section" content="MEEP"/>
+<meta property="article:tag" content="meep"/>
+<meta property="article:tag" content="electromagnetic"/>
+<meta property="og:image" content="/images/profile.jpg">
+
+  <title>Breezey's Blog &ndash; MEEP modelling Part 1: Square Cavity</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://jonbreeze.github.io">
+        <img src="/images/profile.jpg" alt="Jon(athan) Breeze" title="Jon(athan) Breeze">
+      </a>
+      <h1><a href="https://jonbreeze.github.io">Jon(athan) Breeze</a></h1>
+
+<p>theory | code | practice</p>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/jonathan-breeze-65166b82" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/jonbreeze" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/jonbreeze" target="_blank"><i class="fa fa-twitter"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://jonbreeze.github.io">    Home
+</a>
+
+      <a href="https://jonbreeze.github.io/about.html">About</a>
+      <a href="https://jonbreeze.github.io/pubs.html">Publications</a>
+      <a href="https://jonbreeze.github.io/category/masers.html">Masers</a>
+      <a href="https://jonbreeze.github.io/archives.html">Archives</a>
+      <a href="https://jonbreeze.github.io/categories.html">Categories</a>
+      <a href="https://jonbreeze.github.io/tags.html">Tags</a>
+
+
+    </nav>
+
+<article class="single">
+  <header>
+    <h1 id="meep-cavity-square">MEEP modelling Part 1: Square Cavity</h1>
+    <p>
+          Posted on Wed 19 July 2017 in <a href="https://jonbreeze.github.io/category/meep.html">MEEP</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Assuming that you have already had a go at the <a href="http://ab-initio.mit.edu/wiki/index.php/Main_Page">MEEP</a> examples and followed the <a href="http://ab-initio.mit.edu/wiki/index.php/Meep_Tutorial">tutorials</a>, let's look at a nice simple problem comprising a 2D square of air with perfect electric conductor (PEC) boundaries.  </p>
+<div class="highlight"><pre><span></span>; model the eigenmodes in a 2D square cavity
+
+(set! geometry-lattice (make lattice (size 1 1 no-size)))
+
+(set! geometry (list
+        (make block (center 0 0 0) (size 1 1 no-size) (material air))
+))
+
+(set-param! resolution 100)
+
+(define-param fcen 1) ; pulse center frequency                            
+(define-param df 2)  ; pulse width (in frequency)
+(set! sources (list
+               (make source
+                 (src (make gaussian-src (frequency fcen) (fwidth df)))
+                 (component Ex) (center 0.25 0.25) )));
+
+(run-sources+ 200
+    (at-beginning output-epsilon)
+    (after-sources (harminv Ex (vector3 0.25 0.25) fcen df)))
+
+(run-until (/ 1 fcen) (at-every (/ 1 fcen 20) output-efield-x))
+</pre></div>
+
+
+<p>Save this as <code>square.ctl</code> and then get MEEP to process it using the command-line, something like <code>meep square.ctl</code>.</p>
+<p>You should (all being well) see some output text, showing that meep has executed the instructions in <code>square.ctl</code> and finished without errors.  Something like:</p>
+<div class="highlight"><pre><span></span>-----------
+Initializing structure...
+Working in 2D dimensions.
+Computational cell is 1 x 1 x 0 with resolution 100
+     block, center = (0,0,0)
+          size (1,1,1e-20)
+          axes (1,0,0), (0,1,0), (0,0,1)
+          dielectric constant epsilon diagonal = (1,1,1)
+time for set_epsilon = 0.0613561 s
+-----------
+creating output file &quot;./square-eps-000000000.h5&quot;...
+Meep progress: 82.805/205.0 = 40.4% done in 4.0s, 5.9s to go
+on time step 16576 (time=82.88), 0.000241319 s/step
+Meep progress: 162.105/205.0 = 79.1% done in 8.0s, 2.1s to go
+on time step 32436 (time=162.18), 0.000252222 s/step
+harminv0:, frequency, imag. freq., Q, |amp|, amplitude, error
+harminv0:, 0.4999857666481232, 1.0882893498597989e-5, -22971.177964414284, 0.045305721898154114, 3.1130415206365896e-4+0.045304652370786264i, 4.2030394051546753e-7+0.0i
+harminv0:, 0.7070413149469897, 1.2378863270048967e-5, -28558.410393694932, 0.07195910921528555, -0.011071756457960383-0.07110224755936345i, 1.9316359689164192e-6+0.0i
+harminv0:, 0.9998759675224831, 1.1994299289119023e-7, -4168129.973334706, 0.6265837217783827, 0.626520733797277-0.008884284989313266i, 1.8347996614624962e-8+0.0i
+harminv0:, 1.1179313323028492, -1.88017050869101e-6, 297295.199327736, 0.5237907356054649, -0.1556263730143627-0.5001371479189568i, 1.2272846398232592e-7+0.0i
+harminv0:, 1.4995822768901066, -3.2625670732118656e-6, 229816.31384727798, 0.13741814766627156, -0.0024492788458919967-0.13739631851386805i, 8.571631953447988e-8+0.0i
+harminv0:, 1.5807693782229169, 1.4360063025595835e-8, -55040474.94099793, 0.09373290544538834, -0.09013331831365927-0.025726299636805255i, 2.2656098993300138e-8+0.0i
+harminv0:, 1.8024569608057315, -5.7034240905077865e-5, 15801.533712051696, 0.014990388708627778, 0.014952605207006142-0.0010636499232209824i, 1.3412374683039827e-6+0.0i
+run 0 finished at t = 205.0 (41000 timesteps)
+creating output file &quot;./square-ex-000041010.h5&quot;...
+creating output file &quot;./square-ex-000041020.h5&quot;...
+creating output file &quot;./square-ex-000041030.h5&quot;...
+creating output file &quot;./square-ex-000041040.h5&quot;...
+creating output file &quot;./square-ex-000041050.h5&quot;...
+creating output file &quot;./square-ex-000041060.h5&quot;...
+creating output file &quot;./square-ex-000041070.h5&quot;...
+creating output file &quot;./square-ex-000041080.h5&quot;...
+creating output file &quot;./square-ex-000041090.h5&quot;...
+creating output file &quot;./square-ex-000041100.h5&quot;...
+creating output file &quot;./square-ex-000041110.h5&quot;...
+creating output file &quot;./square-ex-000041120.h5&quot;...
+creating output file &quot;./square-ex-000041130.h5&quot;...
+creating output file &quot;./square-ex-000041140.h5&quot;...
+creating output file &quot;./square-ex-000041150.h5&quot;...
+creating output file &quot;./square-ex-000041160.h5&quot;...
+creating output file &quot;./square-ex-000041170.h5&quot;...
+creating output file &quot;./square-ex-000041180.h5&quot;...
+creating output file &quot;./square-ex-000041190.h5&quot;...
+creating output file &quot;./square-ex-000041200.h5&quot;...
+run 1 finished at t = 206.0 (41200 timesteps)
+
+Elapsed run time = 12.1094 s
+</pre></div>
+
+
+<p>So, what actually happened here? MEEP did a few things: setting up arrays representing the materials and boundary conditions of the problem, outputting a file called <code>square-eps-000000000.h5</code>, running the problem for a time of 200, listing the resonant frequencies detected by a probe and saving snapshots of the electric field along <span class="math">\(x\)</span>.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://jonbreeze.github.io/tag/meep.html">meep</a>
+      <a href="https://jonbreeze.github.io/tag/electromagnetic.html">electromagnetic</a>
+    </p>
+  </div>
+
+
+
+
+</article>
+
+    <footer>
+<p>&copy; Jonathan Breeze </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Breezey's Blog ",
+  "url" : "https://jonbreeze.github.io",
+  "image": "/images/profile.jpg",
+  "description": "Thoughts and Writings"
+}
+</script>
+</body>
+</html>
