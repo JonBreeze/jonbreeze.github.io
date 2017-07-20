@@ -87,29 +87,53 @@
 
 
   <div>
-    <p>Assuming that you have already had a go at the <a href="http://ab-initio.mit.edu/wiki/index.php/Main_Page">MEEP</a> examples and followed the <a href="http://ab-initio.mit.edu/wiki/index.php/Meep_Tutorial">tutorials</a>, let's look at a nice simple problem comprising a 2D square of air with perfect electric conductor (PEC) boundaries.  </p>
-<div class="highlight"><pre><span></span>; model the eigenmodes in a 2D square cavity
+    <p>Assuming that you have already had a go at the <a href="http://ab-initio.mit.edu/wiki/index.php/Main_Page">MEEP</a> examples and followed the <a href="http://ab-initio.mit.edu/wiki/index.php/Meep_Tutorial">tutorials</a>, let's try a simple problem of finding the frequencies and fields of the eigenmodes of a two-dimensional square of air/vacuum surrounded by perfect electric conductor (PEC) boundaries.  </p>
+<p>MEEP can use the Scheme programming language as an interface to the nuts &amp; bolts of the code.  You essentially code the problem you want to solve within a program.  Open a new file called <code>square.ctl</code> in your favourite text editor then copy &amp; paste the following snippets of code.</p>
+<div class="highlight"><pre><span></span>; Eigenmodes of a 2D square cavity
+</pre></div>
 
-(set! geometry-lattice (make lattice (size 1 1 no-size)))
 
-(set! geometry (list
+<p>Anything after a colon is a remark.  Always handy to remind yourself what the code does.  </p>
+<p>First thing we do is define the <code>geometry-lattice</code>, this defines the extend and dimensionality of our computational space.  Here, we define a two-dimensional square with sides of length 1 meep units (more on those later) in the <span class="math">\(x\)</span>-<span class="math">\(y\)</span> plane and zero thickness <code>no-size</code> in the <span class="math">\(z\)</span>-direction.</p>
+<div class="highlight"><pre><span></span>(set! geometry-lattice (make lattice (size 1 1 no-size)))
+</pre></div>
+
+
+<p>The next step – and sometimes the trickiest – is to define the <code>geometry</code>, the position, shape, size and material of structures within the computational space.  For this simple case we just define a zero-thickness square of air/vacuum with the same dimensions:</p>
+<div class="highlight"><pre><span></span>(set! geometry (list
         (make block (center 0 0 0) (size 1 1 no-size) (material air))
 ))
+</pre></div>
 
-(set-param! resolution 100)
 
-(define-param fcen 1) ; pulse center frequency                            
+<p>Set the resolution, <em>i.e.</em> number of cells per unit distance:</p>
+<div class="highlight"><pre><span></span>(set-param! resolution 100)
+</pre></div>
+
+
+<p>Define some parameters for the centre frequency and bandwidth of the source gaussian pulse using <code>define-param</code>:</p>
+<div class="highlight"><pre><span></span>(define-param fcen 1) ; pulse center frequency                            
 (define-param df 2)  ; pulse width (in frequency)
-(set! sources (list
+</pre></div>
+
+
+<p>Define the source; in this case a gaussian pulse with centre frequency <code>fcen</code> and bandwidth <code>fwidth</code>, positioned at <span class="math">\(x\)</span>=0.25, <span class="math">\(y\)</span>=0.25 and exciting the <span class="math">\(E_x\)</span> component of the electric field:</p>
+<div class="highlight"><pre><span></span>(set! sources (list
                (make source
                  (src (make gaussian-src (frequency fcen) (fwidth df)))
                  (component Ex) (center 0.25 0.25) )));
+</pre></div>
 
-(run-sources+ 200
+
+<p>Run the FDTD simulation for the duration of the source pulse (exercise: work it out), then continue for a sufficient length of time.  The following statement <code>run-sources</code> does just that. At the beginning it saves a permittivity file (which isn't much help for us at the moment), then after the source pulse, the <code>after-sources</code> command runs <code>harminv</code> which analyses the <span class="math">\(E_x\)</span> time-domain data collected at point <span class="math">\(x\)</span>=0.25, <span class="math">\(y\)</span>=0.25 using harmonic inversion to estimate the resonant frequencies (and Q-factors) of any resonances. The command then runs the FDTD simulation for an additional 200 meep time units, which happen to be 200 periods of the pulse centre frequency <code>fcen</code> (more on those later).</p>
+<div class="highlight"><pre><span></span>(run-sources+ 200
     (at-beginning output-epsilon)
     (after-sources (harminv Ex (vector3 0.25 0.25) fcen df)))
+</pre></div>
 
-(run-until (/ 1 fcen) (at-every (/ 1 fcen 20) output-efield-x))
+
+<p>Then run for an extra time period of (1/fcen), saving 20 files containing snapshots of <span class="math">\(E_x\)</span> field components:</p>
+<div class="highlight"><pre><span></span>(run-until (/ 1 fcen) (at-every (/ 1 fcen 20) output-efield-x))
 </pre></div>
 
 
