@@ -128,7 +128,6 @@
 
 <p>Run the FDTD simulation for the duration of the source pulse (exercise: work it out), then continue for a sufficient length of time.  The following statement <code>run-sources</code> does just that. At the beginning it saves a permittivity file (which isn't much help for us at the moment), then after the source pulse, the <code>after-sources</code> command runs <code>harminv</code> which analyses the <span class="math">\(E_x\)</span> time-domain data collected at point <span class="math">\(x\)</span>=0.25, <span class="math">\(y\)</span>=0.25 using harmonic inversion to estimate the resonant frequencies (and Q-factors) of any resonances. The command then runs the FDTD simulation for an additional 200 meep time units, which happen to be 200 periods of the pulse centre frequency <code>fcen</code> (more on those later).</p>
 <div class="highlight"><pre><span></span>(run-sources+ 200
-    (at-beginning output-epsilon)
     (after-sources (harminv Ex (vector3 0.033 0.033) fcen df)))
 </pre></div>
 
@@ -143,11 +142,10 @@ Computational cell is 1 x 1 x 0 with resolution 21
           size (1,1,1e-20)
           axes (1,0,0), (0,1,0), (0,0,1)
           dielectric constant epsilon diagonal = (1,1,1)
-time for set_epsilon = 0.00230908 s
+time for set_epsilon = 0.00232601 s
 -----------
-creating output file &quot;./square-eps-000000.00.h5&quot;...
-Meep progress: 1265.4761904761904/2003.3333332538605 = 63.2% done in 4.0s, 2.3s to go
-on time step 53179 (time=1266.17), 7.52185e-05 s/step
+Meep progress: 1308.7380952380952/2003.3333332538605 = 65.3% done in 4.0s, 2.1s to go
+on time step 54967 (time=1308.74), 7.27747e-05 s/step
 harminv0:, frequency, imag. freq., Q, |amp|, amplitude, error
 harminv0:, 0.49964982320796947, -6.387829272631824e-7, 391095.1607212498, 0.013285597622112183, -0.007052720387953484-0.011259051438998675i, 2.3287614080376595e-7+0.0i
 harminv0:, 0.7067779190836112, 1.691710912831851e-6, -208894.41385126952, 0.005994921731086088, -0.002373006416742774+0.0055052635820590674i, 5.339765273626355e-7+0.0i
@@ -169,11 +167,11 @@ harminv0:, 2.8817146429468905, -6.336176369508643e-7, 2274017.0687281243, 0.0025
 harminv0:, 2.967296689019438, 5.425430491515188e-6, -273461.86571369617, 0.0011349428220062629, -0.0011331194135311552-6.430866117678506e-5i, 9.606151244136572e-7+0.0i
 run 0 finished at t = 2003.3333333333333 (84140 timesteps)
 
-Elapsed run time = 11.5779 s
+Elapsed run time = 12.8566 s
 </pre></div>
 
 
-<p>So, what actually happened here? MEEP did a few things: setting up arrays representing the materials and boundary conditions of the problem, outputting a file called <code>square-eps-000000000.h5</code>, running the problem for a time of 200 and then listing the resonant frequencies detected by a probe monitoring the <span class="math">\(x\)</span>-component of the electric field at position <span class="math">\((0.05, 0.05)\)</span>.</p>
+<p>So, what actually happened here? MEEP did a few things: setting up arrays representing the materials and boundary conditions of the problem, running the problem for an additional time of 200 after the sources and then listing the resonant frequencies detected by a probe monitoring the <span class="math">\(x\)</span>-component of the electric field at position <span class="math">\((0.05, 0.05)\)</span>.</p>
 <p>We have some data to analyze, onto the next post ...</p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
