@@ -87,14 +87,15 @@
 
 
   <div>
-    <p>Assuming that you have already had a go at the <a href="http://ab-initio.mit.edu/wiki/index.php/Main_Page">MEEP</a> examples and followed the <a href="http://ab-initio.mit.edu/wiki/index.php/Meep_Tutorial">tutorials</a>, let's try a simple problem of finding the frequencies and fields of the eigenmodes of a two-dimensional square of air/vacuum surrounded by perfect electric conductor (PEC) boundaries.  </p>
-<p>MEEP can use the Scheme programming language as an interface to the nuts &amp; bolts of the code.  You essentially code the problem you want to solve within a program.  Open a new file called <code>square.ctl</code> in your favourite text editor then copy &amp; paste the following snippets of code.</p>
+    <p>Assuming that you have already installed <a href="http://ab-initio.mit.edu/wiki/index.php/Main_Page">MEEP</a>, attempted some of the examples and followed the <a href="http://ab-initio.mit.edu/wiki/index.php/Meep_Tutorial">tutorials</a>, let's try a simple problem of finding the frequencies and fields of the eigenmodes of a two-dimensional square of air/vacuum surrounded by perfect electric conductor (PEC) boundaries.  </p>
+<p>MEEP can use the <a href="https://en.wikipedia.org/wiki/Scheme_(programming_language)">Scheme</a> programming language (a dialect of Lisp) as an interface to the nuts &amp; bolts of the code.  You essentially code the problem you want to solve by writing a program.  </p>
+<p>So let's get started.  Open a new file called <code>square.ctl</code> in your favourite text editor then copy &amp; paste the following snippets of code.</p>
 <div class="highlight"><pre><span></span>; Eigenmodes of a 2D square cavity
 </pre></div>
 
 
-<p>Anything after a colon is a remark.  Always handy to remind yourself what the code does.  </p>
-<p>First thing we do is define the <code>geometry-lattice</code>, this defines the extend and dimensionality of our computational space.  Here, we define a two-dimensional square with sides of length 1 meep units (more on those later) in the <span class="math">\(x\)</span>-<span class="math">\(y\)</span> plane and zero thickness <code>no-size</code> in the <span class="math">\(z\)</span>-direction.</p>
+<p>Anything after a colon is a remark.  Always handy to remind yourself what the code does:</p>
+<p>The first thing we need to do is define the <code>geometry-lattice</code> which defines the extent and dimensionality of our computational space.  Here, we define a two-dimensional square with sides of length 1 in meep units (more on those later) in the <span class="math">\(x\)</span>-<span class="math">\(y\)</span> plane and with zero thickness <em>i.e.</em> <code>no-size</code> in the <span class="math">\(z\)</span>-direction:</p>
 <div class="highlight"><pre><span></span>(set! geometry-lattice (make lattice (size 1 1 no-size)))
 </pre></div>
 
@@ -106,34 +107,29 @@
 </pre></div>
 
 
-<p>Set the resolution, <em>i.e.</em> number of cells per unit distance:</p>
-<div class="highlight"><pre><span></span>(set-param! resolution 100)
+<p>Set the resolution, the number of cells per unit distance (a conservative value to keep simulation time low):</p>
+<div class="highlight"><pre><span></span>(set-param! resolution 20)
 </pre></div>
 
 
-<p>Define some parameters for the centre frequency and bandwidth of the source gaussian pulse using <code>define-param</code>:</p>
-<div class="highlight"><pre><span></span>(define-param fcen 1) ; pulse center frequency                            
-(define-param df 2)  ; pulse width (in frequency)
+<p>Define some parameters for the centre frequency and bandwidth of the point-source gaussian pulse using <code>define-param</code>:</p>
+<div class="highlight"><pre><span></span>(define-param fcen 1.5) ; pulse center frequency                            
+(define-param df 3.0)  ; pulse width (in frequency)
 </pre></div>
 
 
-<p>Define the source; in this case a gaussian pulse with centre frequency <code>fcen</code> and bandwidth <code>fwidth</code>, positioned at <span class="math">\(x\)</span>=0.25, <span class="math">\(y\)</span>=0.25 and exciting the <span class="math">\(E_x\)</span> component of the electric field:</p>
+<p>Define the source; in this case a gaussian pulse with centre frequency <code>fcen = 1.5</code> and bandwidth <code>fwidth = 3.0</code>, positioned at <span class="math">\(x\)</span>=0.25, <span class="math">\(y\)</span>=0.25 and exciting the <span class="math">\(E_x\)</span> component of the electric field:</p>
 <div class="highlight"><pre><span></span>(set! sources (list
                (make source
                  (src (make gaussian-src (frequency fcen) (fwidth df)))
-                 (component Ex) (center 0.25 0.25) )));
+                 (component Ex) (center 0.33 0.33) )));
 </pre></div>
 
 
 <p>Run the FDTD simulation for the duration of the source pulse (exercise: work it out), then continue for a sufficient length of time.  The following statement <code>run-sources</code> does just that. At the beginning it saves a permittivity file (which isn't much help for us at the moment), then after the source pulse, the <code>after-sources</code> command runs <code>harminv</code> which analyses the <span class="math">\(E_x\)</span> time-domain data collected at point <span class="math">\(x\)</span>=0.25, <span class="math">\(y\)</span>=0.25 using harmonic inversion to estimate the resonant frequencies (and Q-factors) of any resonances. The command then runs the FDTD simulation for an additional 200 meep time units, which happen to be 200 periods of the pulse centre frequency <code>fcen</code> (more on those later).</p>
 <div class="highlight"><pre><span></span>(run-sources+ 200
     (at-beginning output-epsilon)
-    (after-sources (harminv Ex (vector3 0.25 0.25) fcen df)))
-</pre></div>
-
-
-<p>Then run for an extra time period of (1/fcen), saving 20 files containing snapshots of <span class="math">\(E_x\)</span> field components:</p>
-<div class="highlight"><pre><span></span>(run-until (/ 1 fcen) (at-every (/ 1 fcen 20) output-efield-x))
+    (after-sources (harminv Ex (vector3 0.033 0.033) fcen df)))
 </pre></div>
 
 
@@ -142,55 +138,43 @@
 <div class="highlight"><pre><span></span>-----------
 Initializing structure...
 Working in 2D dimensions.
-Computational cell is 1 x 1 x 0 with resolution 100
+Computational cell is 1 x 1 x 0 with resolution 21
      block, center = (0,0,0)
           size (1,1,1e-20)
           axes (1,0,0), (0,1,0), (0,0,1)
           dielectric constant epsilon diagonal = (1,1,1)
-time for set_epsilon = 0.0613561 s
+time for set_epsilon = 0.00230908 s
 -----------
-creating output file &quot;./square-eps-000000000.h5&quot;...
-Meep progress: 82.805/205.0 = 40.4% done in 4.0s, 5.9s to go
-on time step 16576 (time=82.88), 0.000241319 s/step
-Meep progress: 162.105/205.0 = 79.1% done in 8.0s, 2.1s to go
-on time step 32436 (time=162.18), 0.000252222 s/step
+creating output file &quot;./square-eps-000000.00.h5&quot;...
+Meep progress: 1265.4761904761904/2003.3333332538605 = 63.2% done in 4.0s, 2.3s to go
+on time step 53179 (time=1266.17), 7.52185e-05 s/step
 harminv0:, frequency, imag. freq., Q, |amp|, amplitude, error
-harminv0:, 0.4999857666481232, 1.0882893498597989e-5, -22971.177964414284, 0.045305721898154114, 3.1130415206365896e-4+0.045304652370786264i, 4.2030394051546753e-7+0.0i
-harminv0:, 0.7070413149469897, 1.2378863270048967e-5, -28558.410393694932, 0.07195910921528555, -0.011071756457960383-0.07110224755936345i, 1.9316359689164192e-6+0.0i
-harminv0:, 0.9998759675224831, 1.1994299289119023e-7, -4168129.973334706, 0.6265837217783827, 0.626520733797277-0.008884284989313266i, 1.8347996614624962e-8+0.0i
-harminv0:, 1.1179313323028492, -1.88017050869101e-6, 297295.199327736, 0.5237907356054649, -0.1556263730143627-0.5001371479189568i, 1.2272846398232592e-7+0.0i
-harminv0:, 1.4995822768901066, -3.2625670732118656e-6, 229816.31384727798, 0.13741814766627156, -0.0024492788458919967-0.13739631851386805i, 8.571631953447988e-8+0.0i
-harminv0:, 1.5807693782229169, 1.4360063025595835e-8, -55040474.94099793, 0.09373290544538834, -0.09013331831365927-0.025726299636805255i, 2.2656098993300138e-8+0.0i
-harminv0:, 1.8024569608057315, -5.7034240905077865e-5, 15801.533712051696, 0.014990388708627778, 0.014952605207006142-0.0010636499232209824i, 1.3412374683039827e-6+0.0i
-run 0 finished at t = 205.0 (41000 timesteps)
-creating output file &quot;./square-ex-000041010.h5&quot;...
-creating output file &quot;./square-ex-000041020.h5&quot;...
-creating output file &quot;./square-ex-000041030.h5&quot;...
-creating output file &quot;./square-ex-000041040.h5&quot;...
-creating output file &quot;./square-ex-000041050.h5&quot;...
-creating output file &quot;./square-ex-000041060.h5&quot;...
-creating output file &quot;./square-ex-000041070.h5&quot;...
-creating output file &quot;./square-ex-000041080.h5&quot;...
-creating output file &quot;./square-ex-000041090.h5&quot;...
-creating output file &quot;./square-ex-000041100.h5&quot;...
-creating output file &quot;./square-ex-000041110.h5&quot;...
-creating output file &quot;./square-ex-000041120.h5&quot;...
-creating output file &quot;./square-ex-000041130.h5&quot;...
-creating output file &quot;./square-ex-000041140.h5&quot;...
-creating output file &quot;./square-ex-000041150.h5&quot;...
-creating output file &quot;./square-ex-000041160.h5&quot;...
-creating output file &quot;./square-ex-000041170.h5&quot;...
-creating output file &quot;./square-ex-000041180.h5&quot;...
-creating output file &quot;./square-ex-000041190.h5&quot;...
-creating output file &quot;./square-ex-000041200.h5&quot;...
-run 1 finished at t = 206.0 (41200 timesteps)
+harminv0:, 0.49964982320796947, -6.387829272631824e-7, 391095.1607212498, 0.013285597622112183, -0.007052720387953484-0.011259051438998675i, 2.3287614080376595e-7+0.0i
+harminv0:, 0.7067779190836112, 1.691710912831851e-6, -208894.41385126952, 0.005994921731086088, -0.002373006416742774+0.0055052635820590674i, 5.339765273626355e-7+0.0i
+harminv0:, 0.9971987526065739, 1.6536690637644267e-7, -3015109.7775770864, 0.07795287534323195, 0.03595210583102817-0.06916716605870166i, 4.795095158586878e-8+0.0i
+harminv0:, 1.1157887584886936, -1.399235272127685e-7, 3987137.7627295624, 0.06361903731428901, -0.044370834218134786-0.04559178631709551i, 3.2413084735784084e-8+0.0i
+harminv0:, 1.4115657480682742, 4.0255510363580226e-8, -17532577.966584906, 0.0940011704004871, 0.06407402923620237+0.06878036648709931i, 1.0281322317081819e-8+0.0i
+harminv0:, 1.4905289327310962, 9.500093703078488e-8, -7844811.742478356, 0.06351546181488635, 0.06351074111746435-7.743721771272548e-4i, 1.520738285961082e-8+0.0i
+harminv0:, 1.5727074536238252, 2.96402781900332e-9, -265299037.26623282, 0.07776848493442345, 0.04957534656074576-0.059918463451407035i, 1.3776718980993644e-8+0.0i
+harminv0:, 1.7956591793170913, -3.5930574726457174e-8, 24987899.483762957, 0.14467020137786865, -0.14410062932432377+0.012824811696352946i, 5.64638078279913e-9+0.0i
+harminv0:, 1.9774963650323654, 5.985926891666783e-10, -1651787935.9546697, 0.32586317906949197, 0.13754120415113452+0.2954136568168976i, 2.5490377382288595e-9+0.0i
+harminv0:, 2.0405449516936827, 5.0028253513608083e-8, -20393925.515895113, 0.07854510474478087, 0.0700194662861115+0.035589434111498515i, 8.967247528200056e-9+0.0i
+harminv0:, 2.112340214452192, 1.8721541130953075e-7, -5641469.897368052, 0.03199366456475918, 0.030697263310128828-0.009015131588110398i, 4.3109606573344645e-8+0.0i
+harminv0:, 2.2180148843246115, -3.3323172736019785e-8, 33280367.717313845, 0.15415443562678421, 0.02600193112317173-0.15194567977168089i, 1.102306177931318e-8+0.0i
+harminv0:, 2.455914837687735, 7.257616030482478e-7, -1691956.9920568455, 0.011492624094930175, -0.008267517260237433+0.007983017408163767i, 1.0618327099242761e-7+0.0i
+harminv0:, 2.48296238791261, 1.0779105510409477e-7, -11517478.818232141, 0.08350288866690071, -0.041203462088473225+0.07262924430035442i, 1.607264692884796e-8+0.0i
+harminv0:, 2.507364766155105, -1.2481150855773882e-6, 1004460.5642256049, 0.00659257506445602, -0.0016962095067800825+0.006370629426484966i, 1.6361391418103088e-7+0.0i
+harminv0:, 2.6549401069305634, -4.352979152939769e-7, 3049566.7606604076, 0.008477851186097477, 0.008175864272254663+0.0022425887129128544i, 1.4291818179890576e-7+0.0i
+harminv0:, 2.8817146429468905, -6.336176369508643e-7, 2274017.0687281243, 0.0025826797100813666, -0.0013432863107103704-0.0022058595540795645i, 2.1361441974716904e-7+0.0i
+harminv0:, 2.967296689019438, 5.425430491515188e-6, -273461.86571369617, 0.0011349428220062629, -0.0011331194135311552-6.430866117678506e-5i, 9.606151244136572e-7+0.0i
+run 0 finished at t = 2003.3333333333333 (84140 timesteps)
 
-Elapsed run time = 12.1094 s
+Elapsed run time = 11.5779 s
 </pre></div>
 
 
-<p>So, what actually happened here? MEEP did a few things: setting up arrays representing the materials and boundary conditions of the problem, outputting a file called <code>square-eps-000000000.h5</code>, running the problem for a time of 200, listing the resonant frequencies detected by a probe and saving snapshots of the electric field along <span class="math">\(x\)</span>.</p>
-<p>We have some data to analyze.  Next post.</p>
+<p>So, what actually happened here? MEEP did a few things: setting up arrays representing the materials and boundary conditions of the problem, outputting a file called <code>square-eps-000000000.h5</code>, running the problem for a time of 200 and then listing the resonant frequencies detected by a probe monitoring the <span class="math">\(x\)</span>-component of the electric field at position <span class="math">\((0.05, 0.05)\)</span>.</p>
+<p>We have some data to analyze, onto the next post ...</p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
         indent = "0em",
