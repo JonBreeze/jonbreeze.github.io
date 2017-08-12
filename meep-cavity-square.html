@@ -132,7 +132,7 @@
 </pre></div>
 
 
-<p>Once you've copy &amp; pasted all of these sections into your text editor, save it as <code>square.ctl</code> or download it from <a href="../ctls/square.ctl">here</a>.  Then get MEEP to process it using the command-line, something like <code>meep square.ctl</code>.</p>
+<p>Once you've copy &amp; pasted all of these sections into your text editor, save it as <code>square.ctl</code> or download it from <a href="../ctls/square.ctl">here</a>.  Then get MEEP to process it using the command-line, something like <code>meep square.ctl | tee square.out</code>.  The pipe (<code>tee</code>) echoes the output into a file.</p>
 <p>You should (all being well) see some output text, showing that meep has executed the instructions in <code>square.ctl</code> and finished without errors.  Something like:</p>
 <div class="highlight"><pre><span></span>-----------
 Initializing structure...
