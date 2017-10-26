@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="https://jonbreeze.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://jonbreeze.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://jonbreeze.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+
+
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+
+<meta name="author" content="Jon Breeze" />
+<meta name="description" content="Introduction to MEEP" />
+<meta name="keywords" content="meep, electromagnetic">
+<meta property="og:site_name" content="Jon(athan) Breeze's Blog"/>
+<meta property="og:title" content="Introduction to MEEP"/>
+<meta property="og:description" content="Introduction to MEEP"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://jonbreeze.github.io/meep-intro.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-07-20 10:20:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://jonbreeze.github.io/author/jon-breeze.html">
+<meta property="article:section" content="MEEP"/>
+<meta property="article:tag" content="meep"/>
+<meta property="article:tag" content="electromagnetic"/>
+<meta property="og:image" content="/images/profile.jpg">
+
+  <title>Jon(athan) Breeze's Blog &ndash; Introduction to MEEP</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://jonbreeze.github.io">
+        <img src="/images/profile.jpg" alt="Jon(athan) Breeze" title="Jon(athan) Breeze">
+      </a>
+      <h1><a href="https://jonbreeze.github.io">Jon(athan) Breeze</a></h1>
+
+<p>theory | code | practice</p>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/jonathan-breeze-65166b82" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/jonbreeze" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/jonbreeze" target="_blank"><i class="fa fa-twitter"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://jonbreeze.github.io">    Home
+</a>
+
+      <a href="https://jonbreeze.github.io/about.html">About</a>
+      <a href="https://jonbreeze.github.io/pubs.html">Publications</a>
+      <a href="https://jonbreeze.github.io/category/masers.html">Masers</a>
+      <a href="https://jonbreeze.github.io/archives.html">Archives</a>
+      <a href="https://jonbreeze.github.io/categories.html">Categories</a>
+      <a href="https://jonbreeze.github.io/tags.html">Tags</a>
+
+
+    </nav>
+
+<article class="single">
+  <header>
+    <h1 id="meep-intro">Introduction to MEEP</h1>
+    <p>
+          Posted on Thu 20 July 2017 in <a href="https://jonbreeze.github.io/category/meep.html">MEEP</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p><a href="http://ab-initio.mit.edu/wiki/index.php/Meep">MEEP</a> is a free (GNU GPL) finite-difference time-domain package developed by MIT for modelling electromagnetic systems.</p>
+<p>It has some useful features such as:  </p>
+<ul>
+<li>1D, 2D, 3D and cylindrical coordinates  </li>
+<li>Parallelism using the MPI standard   </li>
+<li>Arbitrary anisotropic electric permittivity ε and magnetic permeability μ</li>
+<li>Dispersive ε(ω) and μ(ω) (including loss/gain) and nonlinear (Kerr &amp; Pockels) dielectric and magnetic materials, and electric/magnetic conductivities σ.</li>
+<li>PML absorbing boundaries and/or perfect conductor and/or Bloch-periodic boundary conditions.</li>
+<li>Exploitation of symmetries to reduce the computation size — even/odd mirror symmetries and 90°/180° rotations.</li>
+<li>Scriptability — either via a Scheme scripting front-end (as in libctl and MPB), or callable as a C++ library; a Python interface is also available.</li>
+<li>Field output in the HDF5 standard scientific data format, supported by many visualization tools.</li>
+<li>Arbitrary material and source distributions.</li>
+<li>Field analysis including flux spectra, Maxwell stress tensor, frequency extraction, local density of states and energy integrals, near to far field transformations – all completely programmable.</li>
+<li>Multi-parameter optimization, root-finding, integration, etcetera (via libctl).</li>
+</ul>
+<p>I've been using MEEP for quite a few years and recently realised I had a whole bunch of different systems I had been modelling that would probably never see the light of day, but might be useful to others.  </p>
+<p>So I shall slowly be adding these MEEP examples to the blog.  In the meantime, I recommend checking out MEEP – install it and go through the tutorials.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://jonbreeze.github.io/tag/meep.html">meep</a>
+      <a href="https://jonbreeze.github.io/tag/electromagnetic.html">electromagnetic</a>
+    </p>
+  </div>
+
+
+
+
+</article>
+
+    <footer>
+<p>&copy; Jonathan Breeze </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Jon(athan) Breeze's Blog ",
+  "url" : "https://jonbreeze.github.io",
+  "image": "/images/profile.jpg",
+  "description": "Thoughts and Writings"
+}
+</script>
+</body>
+</html>
