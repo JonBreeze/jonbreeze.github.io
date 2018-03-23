@@ -23,7 +23,7 @@
 <meta name="author" content="Jon Breeze" />
 <meta name="description" content="MEEP modelling: Square Cavity – Part 2" />
 <meta name="keywords" content="meep, electromagnetic">
-<meta property="og:site_name" content="Jon(athan) Breeze's Blog"/>
+<meta property="og:site_name" content="Jonathan Breeze's Blog"/>
 <meta property="og:title" content="MEEP modelling: Square Cavity – Part 2"/>
 <meta property="og:description" content="MEEP modelling: Square Cavity – Part 2"/>
 <meta property="og:locale" content="en_US"/>
@@ -37,16 +37,16 @@
 <meta property="article:tag" content="electromagnetic"/>
 <meta property="og:image" content="/images/profile.jpg">
 
-  <title>Jon(athan) Breeze's Blog &ndash; MEEP modelling: Square Cavity – Part 2</title>
+  <title>Jonathan Breeze's Blog &ndash; MEEP modelling: Square Cavity – Part 2</title>
 
 </head>
 <body>
   <aside>
     <div>
       <a href="https://jonbreeze.github.io">
-        <img src="/images/profile.jpg" alt="Jon(athan) Breeze" title="Jon(athan) Breeze">
+        <img src="/images/profile.jpg" alt="Jonathan Breeze" title="Jonathan Breeze">
       </a>
-      <h1><a href="https://jonbreeze.github.io">Jon(athan) Breeze</a></h1>
+      <h1><a href="https://jonbreeze.github.io">Jonathan Breeze</a></h1>
 
 <p>theory | code | practice</p>
 
@@ -129,7 +129,7 @@ Elapsed run time = 12.9194 s
 </pre></div>
 
 
-<p>We can ignore the first entry <code>0.000</code> since it is the result of printing the second column of the legend <code>harminv0:, frequency, imag. freq., Q, |amp|, amplitude, error</code>.
+<p>We ignore the first entry <code>0.000</code> since it is the result of printing the second column of the legend <code>harminv0:, frequency, imag. freq., Q, |amp|, amplitude, error</code>.
 Due to the simple geometry we can also calculate the frequency of the modes analytically using the expression
 </p>
 <div class="math">$$
@@ -141,10 +141,8 @@ This can be derived from the wavenumber <span class="math">\(k^2 = k_x^2 + k_y^2
 Since <span class="math">\(c=1\)</span> in <code>meep</code>, then
 </p>
 <div class="math">$$
-f = \frac{ck}{2\pi} = \frac{\pi\sqrt{n_x^2+n_y^2}}{2\pi} = \tfrac{1}{2} \sqrt{n_x^2 + n_y^2}.
+f = \frac{ck}{2\pi} = \frac{\pi\sqrt{n_x^2+n_y^2}}{2\pi} = \tfrac{1}{2} \sqrt{n_x^2 + n_y^2}
 $$</div>
-<p><strong>NOTE</strong>: because our resonant structure is a symmetric square, we have degenerate frequencies (<em>i.e.</em> the same) for some <span class="math">\(n_x\)</span>, <span class="math">\(n_y\)</span>.  We can lift this degeneracy by breaking symmetry and making the structure rectangular.</p>
-<p>Here's a table comparing <code>meep</code> and analytical frequencies:</p>
 <table>
 <thead>
 <tr>
@@ -159,8 +157,8 @@ $$</div>
 <tbody>
 <tr>
 <td>0.4996</td>
-<td>0,1</td>
-<td>1,0</td>
+<td>0</td>
+<td>1</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{0^2 + 1^2} = \tfrac{1}{2}\)</span></td>
 <td>0.500</td>
 <td>0.0004</td>
@@ -175,16 +173,16 @@ $$</div>
 </tr>
 <tr>
 <td>0.9972</td>
-<td>0,2</td>
-<td>2,0</td>
+<td>0</td>
+<td>2</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{0^2 + 2^2} = 1\)</span></td>
 <td>1.000</td>
 <td>0.0028</td>
 </tr>
 <tr>
 <td>1.1158</td>
-<td>1,2</td>
-<td>2,1</td>
+<td>1</td>
+<td>2</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{1^2 + 2^2} = \tfrac{\sqrt{5}}{2}\)</span></td>
 <td>1.118</td>
 <td>0.0022</td>
@@ -199,32 +197,32 @@ $$</div>
 </tr>
 <tr>
 <td>1.4905</td>
-<td>0,3</td>
-<td>3,0</td>
+<td>0</td>
+<td>3</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{0^2 + 3^2} = \tfrac{3}{2}\)</span></td>
 <td>1.500</td>
 <td>0.0095</td>
 </tr>
 <tr>
 <td>1.5727</td>
-<td>1,3</td>
-<td>3,1</td>
+<td>1</td>
+<td>3</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{1^2 + 3^2} = \tfrac{\sqrt{10}}{2}\)</span></td>
 <td>1.581</td>
 <td>0.0083</td>
 </tr>
 <tr>
 <td>1.7957</td>
-<td>2,3</td>
-<td>3,2</td>
+<td>2</td>
+<td>3</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{2^2 + 3^2} = \tfrac{\sqrt{13}}{2}\)</span></td>
 <td>1.803</td>
 <td>0.0073</td>
 </tr>
 <tr>
 <td>1.9775</td>
-<td>0,4</td>
-<td>4,0</td>
+<td>0</td>
+<td>4</td>
 <td><span class="math">\(\tfrac{1}{2}\sqrt{0^2 + 4^2} = 2\)</span></td>
 <td>2.000</td>
 <td>0.0225</td>
@@ -368,7 +366,7 @@ $$</div>
 {
   "@context" : "http://schema.org",
   "@type" : "Blog",
-  "name": " Jon(athan) Breeze's Blog ",
+  "name": " Jonathan Breeze's Blog ",
   "url" : "https://jonbreeze.github.io",
   "image": "/images/profile.jpg",
   "description": "Thoughts and Writings"
